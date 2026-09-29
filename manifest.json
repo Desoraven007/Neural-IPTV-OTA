@@ -1,0 +1,15 @@
+{
+  "version": "7.0.18",
+  "build_id": "BLD-034",
+  "channel": "Canary",
+  "encrypted": true,
+  "encryption": "CHACHA20-HMAC-SHA256-v1",
+  "package_url": "https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/releases/canary-7.0.18/NeuralIPTVPlayer.nup",
+  "package_sha256": "678e810a078ad25c889e97f2d3ed1dfc87c02392832fca09e921778c959b80af",
+  "package_size": 37732010,
+  "sha256": "bb8db3836e783bdc1237c41732b1d96502a51c1bae119f1c2c2d577ffc78899f",
+  "size": 37731950,
+  "next_manifest_url": "https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json",
+  "public": true,
+  "auth_required": false
+}
