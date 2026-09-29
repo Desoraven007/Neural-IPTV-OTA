@@ -1,6 +1,6 @@
-# Neural IPTV OTA
+# updates
 
-Canal público GitHub-only de atualizações do Neural IPTV Player.
+Canal público GitHub-only de atualizações
 
 ## Estado atual
 - Versão: **7.0.18**
@@ -15,4 +15,3 @@ Este repositório contém apenas metadata pública e pacotes OTA cifrados. O có
 Fluxo da app:
 `manifest público → download .nup cifrado → SHA/tamanho → desencriptação local → SHA/tamanho/NRO0 → backup → instalação → STARTUP_OK`
 
-Não são usados Vercel, Render, Railway, Floot, DigitalOcean ou outro host/backend externo no fluxo OTA.
