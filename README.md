@@ -6,7 +6,7 @@ Canal público GitHub-only de atualizações
 - Versão: **7.0.18**
 - Build: **BLD-034**
 - Canal: **Canary**
-- Pacote: `releases/canary-7.0.18/NeuralIPTVPlayer.nup`
+- Pacote: x
 - Pacote cifrado: **sim**
 - Autenticação necessária para OTA: **não**
 
