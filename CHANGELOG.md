@@ -17,5 +17,4 @@
 - Regista contexto de percurso, tempo entre ações e repetições.
 - Capturas seguem no Report DEV para Google Drive.
 - Contas IPTV e ecrãs sensíveis ficam fora das capturas automáticas.
-- OTA continua público no GitHub com pacote cifrado.
-
+- OTA continua público no GitHub com pacote cifrado.\n## 7.0.21 / BLD-037 Beta\n- Corrige loop de atualização em launchers/Sphaira.\n- Sincroniza executável ativo e caminho canónico Neural IPTV.\n- Valida envSetNextLoad em vez de sair silenciosamente.\n- Mantém Dev Eye Sentinela da BLD-036.\n- OTA público cifrado no GitHub.\n
