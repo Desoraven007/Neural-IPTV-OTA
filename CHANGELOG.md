@@ -8,7 +8,7 @@
 - Desencriptação local e nova validação do NRO por SHA-256, tamanho e NRO0.
 - Backup verificado e instalação transacional.
 - Código-fonte permanece no repositório privado.
-## 7.0.19 / BLD-035 Canary
+## 7.0.19 / BLD-035 Beta
 - Reports DEV + Dev Eye passam para Google Drive.
 - OTA continua público no GitHub com pacote cifrado.
 - Sem token GitHub na app para atualizar.
