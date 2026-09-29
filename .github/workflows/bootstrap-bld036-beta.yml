@@ -1,0 +1,111 @@
+name: Bootstrap BLD-036 Beta OTA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bootstrap-bld036-beta.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download validated BLD-036 artifact
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fL --retry 3 'https://sdmntprukwest.oaiusercontent.com/files/00000000-e018-8243-81fc-f6f794936b8e/raw?se=2026-09-29T23%3A10%3A25Z&sp=r&sv=2026-02-06&sr=b&scid=faad6513-4c86-5126-abe1-bf2bb77f1705&skoid=3804227d-1b52-417d-afd9-9ffbb50fa53e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-29T06%3A42%3A16Z&ske=2026-09-30T06%3A42%3A16Z&sks=b&skv=2026-02-06&sig=g8cwZTBd%2BRsRugXvlYr2XHBtgQ2APiOS365MPgL%2B33I%3D' -o bld036.zip
+          mkdir artifact
+          unzip -q bld036.zip -d artifact
+
+      - name: Validate BLD-036 Beta payload
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("artifact")
+          nro=(root/"NeuralIPTVPlayer.nro").read_bytes()
+          nup=(root/"NeuralIPTVPlayer.nup").read_bytes()
+          m=json.loads((root/"manifest.json").read_text())
+          r=json.loads((root/"build-result.json").read_text())
+          assert m["version"]=="7.0.20" and m["build_id"]=="BLD-036" and m["channel"]=="Beta"
+          assert r["version"]=="7.0.20" and r["build_id"]=="BLD-036" and r["channel"]=="Beta"
+          assert m["encrypted"] is True and m["public"] is True and m["auth_required"] is False
+          assert hashlib.sha256(nup).hexdigest()==m["package_sha256"]=="e18914e2f3736cb87ff1656989729e22c038247291b491e7b920d64448cdc0a8"
+          assert len(nup)==m["package_size"]==37801642
+          assert hashlib.sha256(nro).hexdigest()==m["sha256"]=="0a0d00b639506312d1f6e9f8611a3ac44d1cceb13ffa2fb17c3f2384ccd7f1b5"
+          assert len(nro)==m["size"]==37801582
+          assert nro[16:20]==b"NRO0"
+          assert m["package_url"]=="https://github.com/Desoraven007/Neural-IPTV-OTA/releases/download/beta-7.0.20/NeuralIPTVPlayer.nup"
+          print("BLD-036 Beta payload PASS")
+          PY
+
+      - name: Publish encrypted Beta release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TAG="beta-7.0.20"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" artifact/NeuralIPTVPlayer.nup artifact/manifest.json --clobber
+            gh release edit "$TAG" --title "Neural IPTV 7.0.20 / BLD-036 Beta"
+          else
+            gh release create "$TAG" artifact/NeuralIPTVPlayer.nup artifact/manifest.json \
+              --title "Neural IPTV 7.0.20 / BLD-036 Beta" \
+              --notes "Dev Eye Sentinela Evolução: capturas locais para UX/UI/design, métricas de percurso e envio pelo Report para Google Drive. Áreas sensíveis excluídas das capturas automáticas." \
+              --prerelease
+          fi
+
+      - name: Promote Beta manifest
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp artifact/manifest.json manifest.json
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("CHANGELOG.md")
+          old=p.read_text(encoding="utf-8") if p.exists() else "# Neural IPTV OTA\n"
+          marker="## 7.0.20 / BLD-036 Beta"
+          entry="""\n## 7.0.20 / BLD-036 Beta
+          - Dev Eye Sentinela guarda capturas locais para análise UX/UI e design.
+          - Regista contexto de percurso, tempo entre ações e repetições.
+          - Capturas seguem no Report DEV para Google Drive.
+          - Contas IPTV e ecrãs sensíveis ficam fora das capturas automáticas.
+          - OTA continua público no GitHub com pacote cifrado.
+          """
+          if marker not in old:
+              p.write_text(old.rstrip()+entry+"\n",encoding="utf-8")
+          PY
+          git config user.name "Neural IPTV Publisher"
+          git config user.email "actions@users.noreply.github.com"
+          git add manifest.json CHANGELOG.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish Neural IPTV 7.0.20 BLD-036 Beta"
+            git push
+          fi
+
+      - name: Verify public Beta OTA
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json -o check.json
+          python3 - <<'PY'
+          import json
+          m=json.load(open("check.json"))
+          assert m["version"]=="7.0.20"
+          assert m["build_id"]=="BLD-036"
+          assert m["channel"]=="Beta"
+          assert m["public"] is True and m["auth_required"] is False
+          print("PUBLIC BETA MANIFEST PASS")
+          PY
+          URL="$(python3 -c 'import json; print(json.load(open("check.json"))["package_url"])')"
+          curl -fLIsS --retry 3 "$URL" >/dev/null
+          echo "PUBLIC BETA PACKAGE PASS"
