@@ -12,4 +12,10 @@
 - Reports DEV + Dev Eye passam para Google Drive.
 - OTA continua público no GitHub com pacote cifrado.
 - Sem token GitHub na app para atualizar.
+## 7.0.20 / BLD-036 Beta
+- Dev Eye Sentinela guarda capturas locais para análise UX/UI e design.
+- Regista contexto de percurso, tempo entre ações e repetições.
+- Capturas seguem no Report DEV para Google Drive.
+- Contas IPTV e ecrãs sensíveis ficam fora das capturas automáticas.
+- OTA continua público no GitHub com pacote cifrado.
 
