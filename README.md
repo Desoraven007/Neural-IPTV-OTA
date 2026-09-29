@@ -1,10 +1,18 @@
 # Neural IPTV OTA
 
-Public GitHub-only update channel for Neural IPTV Player.
+Canal público GitHub-only de atualizações do Neural IPTV Player.
 
-This repository intentionally contains only public update metadata and encrypted OTA payloads.
+## Estado atual
+- Versão: **7.0.18**
+- Build: **BLD-034**
+- Canal: **Canary**
+- Pacote: `releases/canary-7.0.18/NeuralIPTVPlayer.nup`
+- Pacote cifrado: **sim**
+- Autenticação necessária para OTA: **não**
 
-- Source code: not published here.
-- OTA package: encrypted `.nup`.
-- Client update download: anonymous/public GitHub.
-- External hosting/CDN/backend: none.
+Este repositório contém apenas metadata pública e pacotes OTA cifrados. O código-fonte e as builds continuam no repositório privado.
+
+Fluxo da app:
+`manifest público → download .nup cifrado → SHA/tamanho → desencriptação local → SHA/tamanho/NRO0 → backup → instalação → STARTUP_OK`
+
+Não são usados Vercel, Render, Railway, Floot, DigitalOcean ou outro host/backend externo no fluxo OTA.
