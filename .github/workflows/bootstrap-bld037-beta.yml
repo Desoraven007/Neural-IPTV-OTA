@@ -71,13 +71,7 @@ jobs:
           p=Path("CHANGELOG.md")
           old=p.read_text(encoding="utf-8") if p.exists() else "# Neural IPTV OTA\n"
           marker="## 7.0.21 / BLD-037 Beta"
-          entry="""\n## 7.0.21 / BLD-037 Beta
-- Corrige loop de atualização em launchers/Sphaira.
-- Sincroniza executável ativo e caminho canónico Neural IPTV.
-- Valida envSetNextLoad em vez de sair silenciosamente.
-- Mantém Dev Eye Sentinela da BLD-036.
-- OTA público cifrado no GitHub.
-"""
+          entry="\\n## 7.0.21 / BLD-037 Beta\\n- Corrige loop de atualização em launchers/Sphaira.\\n- Sincroniza executável ativo e caminho canónico Neural IPTV.\\n- Valida envSetNextLoad em vez de sair silenciosamente.\\n- Mantém Dev Eye Sentinela da BLD-036.\\n- OTA público cifrado no GitHub.\\n"
           if marker not in old:
               p.write_text(old.rstrip()+entry+"\n",encoding="utf-8")
           PY
