@@ -1,7 +1,7 @@
 {
   "version": "7.0.19",
   "build_id": "BLD-035",
-  "channel": "Canary",
+  "channel": "Beta",
   "encrypted": true,
   "encryption": "CHACHA20-HMAC-SHA256-v1",
   "package_url": "https://github.com/Desoraven007/Neural-IPTV-OTA/releases/download/canary-7.0.19/NeuralIPTVPlayer.nup",
