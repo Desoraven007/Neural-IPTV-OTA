@@ -18,3 +18,7 @@
 - Capturas seguem no Report DEV para Google Drive.
 - Contas IPTV e ecrãs sensíveis ficam fora das capturas automáticas.
 - OTA continua público no GitHub com pacote cifrado.\n## 7.0.21 / BLD-037 Beta\n- Corrige loop de atualização em launchers/Sphaira.\n- Sincroniza executável ativo e caminho canónico Neural IPTV.\n- Valida envSetNextLoad em vez de sair silenciosamente.\n- Mantém Dev Eye Sentinela da BLD-036.\n- OTA público cifrado no GitHub.\n
+
+## 7.0.22 / BLD-038 Beta
+- Google Drive OAuth em 3 passos: credenciais, código Google, concluir ligação.
+- Mantém fix de loop OTA BLD-037 e Dev Eye Sentinela.
