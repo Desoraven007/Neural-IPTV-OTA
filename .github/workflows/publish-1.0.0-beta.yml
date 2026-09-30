@@ -1,0 +1,78 @@
+name: Publish Neural IPTV 1.0.0 Beta
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-1.0.0-beta.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch validated BLD-039 artifact
+        env:
+          ARTIFACT_URL_B64: "aHR0cHM6Ly9zZG1udHBycG9sYW5kY2VudHJhbC5vYWl1c2VyY29udGVudC5jb20vZmlsZXMvMDAwMDAwMDAtMThlMC04MjBhLTk2MmEtMDRhZWIzNzM2YTQ0L3Jhdz9zZT0yMDI2LTA5LTMwVDA3JTNBMDglM0ExMFomc3A9ciZzdj0yMDI2LTAyLTA2JnNyPWImc2NpZD1hYjcxNDNhZC04MGY3LTU3YmQtOTAyZS03NDc3MDBiYjlkMzkmc2tvaWQ9MzgwNDIyN2QtMWI1Mi00MTdkLWFmZDktOWZmYmI1MGZhNTNlJnNrdGlkPWE0OGNjYTU2LWU2ZGEtNDg0ZS1hODE0LTljODQ5NjUyYmNiMyZza3Q9MjAyNi0wOS0zMFQwNiUzQTU5JTNBMDVaJnNrZT0yMDI2LTEwLTAxVDA2JTNBNTklM0EwNVomc2tzPWImc2t2PTIwMjYtMDItMDYmc2lnPWhDcFMzTnp4SHhqY0NZWVdZdmFaVzFMUTBLbkZCeUNvZyUyQlpkTEVRelVqWSUzRA=="
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          URL="$(printf '%s' "$ARTIFACT_URL_B64" | base64 -d)"
+          curl -fL --retry 3 "$URL" -o bld039.zip
+          mkdir artifact
+          unzip -q bld039.zip -d artifact
+
+      - name: Validate 1.0.0 Beta
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("artifact")
+          nro=(p/"NeuralIPTVPlayer.nro").read_bytes()
+          nup=(p/"NeuralIPTVPlayer.nup").read_bytes()
+          upd=(p/"NeuralIPTVUpdater.nro").read_bytes()
+          m=json.loads((p/"manifest.json").read_text())
+          assert m["display_version"]=="1.0.0 Beta"
+          assert m["product_version"]=="1.0.0"
+          assert m["version"]=="7.0.23"
+          assert m["update_seq"]==39
+          assert m["build_id"]=="BLD-039"
+          assert nro[16:20]==b"NRO0" and upd[16:20]==b"NRO0"
+          assert hashlib.sha256(nro).hexdigest()==m["sha256"]
+          assert hashlib.sha256(nup).hexdigest()==m["package_sha256"]
+          assert hashlib.sha256(upd).hexdigest()==m["updater_sha256"]
+          PY
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TAG="beta-1.0.0"
+          gh release create "$TAG"             artifact/NeuralIPTVPlayer.nup             artifact/NeuralIPTVPlayer.nro             artifact/NeuralIPTVUpdater.nro             artifact/manifest.json             --title "Neural IPTV 1.0.0 Beta / BLD-039"             --notes "Nova baseline pública 1.0.0 Beta. Inclui Neural Updater externo embutido no Player para atualizações futuras robustas."             --prerelease
+          cp artifact/manifest.json manifest.json
+          git config user.name "Neural IPTV Publisher"
+          git config user.email "actions@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "Publish Neural IPTV 1.0.0 Beta"
+          git push
+
+      - name: Verify public baseline
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json -o check.json
+          python3 - <<'PY'
+          import json
+          m=json.load(open("check.json"))
+          assert m["display_version"]=="1.0.0 Beta"
+          assert m["update_seq"]==39
+          assert m["build_id"]=="BLD-039"
+          PY
