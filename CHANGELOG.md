@@ -30,3 +30,12 @@
 - Remove a introdução manual de Client ID e Client Secret na Switch.
 - update_seq 2; update_epoch 1.
 
+## 1.0.2 / BLD-003 Beta
+- Atualização cumulativa direta a partir da BLD-001.
+- Inclui deteção automática de JSON Google por conteúdo, independentemente do nome.
+- Novo Centro de Notificações: Caixa de entrada, Lidas e Arquivadas.
+- Arquivar e apagar mensagens.
+- Sino integrado na HUD e anima apenas quando entram novas notificações.
+- Feed público para atualizações, novidades e pedidos voluntários de apoio à evolução.
+- update_seq 3; update_epoch 1.
+
