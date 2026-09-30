@@ -1,0 +1,139 @@
+name: Publish Neural IPTV 1.0.2 BLD-003
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "publish/bld003.ready"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout OTA repository
+        uses: actions/checkout@v4
+
+      - name: Download validated BLD-003 artifact
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fL --retry 5 'https://sdmntprukwest.oaiusercontent.com/files/00000000-f38c-8243-b13b-27a1dc50d97f/raw?se=2026-09-30T10%3A49%3A19Z&sp=r&sv=2026-02-06&sr=b&scid=bd4c2fa3-d808-535c-80b4-5c10b2e9b8ba&skoid=3804227d-1b52-417d-afd9-9ffbb50fa53e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-30T06%3A37%3A58Z&ske=2026-10-01T06%3A37%3A58Z&sks=b&skv=2026-02-06&sig=cGcURjDjQ%2B5UnPBZ2Jf7YePATWxUZF7Wvdsl0NW57mA%3D' -o artifact.zip
+          rm -rf artifact
+          mkdir artifact
+          unzip -q artifact.zip -d artifact
+          test -s artifact/NeuralIPTVPlayer.nup
+          test -s artifact/NeuralIPTVPlayer.nro
+          test -s artifact/NeuralIPTVUpdater.nro
+          test -s artifact/manifest.json
+          test -s artifact/build-result.json
+
+      - name: Normalize and validate BLD-003 manifest
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+
+          root=Path("artifact")
+          mp=root/"manifest.json"
+          rp=root/"build-result.json"
+          nro=root/"NeuralIPTVPlayer.nro"
+          nup=root/"NeuralIPTVPlayer.nup"
+          updater=root/"NeuralIPTVUpdater.nro"
+
+          m=json.loads(mp.read_text(encoding="utf-8"))
+          r=json.loads(rp.read_text(encoding="utf-8"))
+
+          assert m["version"]=="1.0.2"
+          assert m["build_id"]=="BLD-003"
+          assert m["update_epoch"]==1
+          assert m["update_seq"]==3
+          assert m["encrypted"] is True
+          assert m["encryption"]=="CHACHA20-HMAC-SHA256-v1"
+          assert m["public"] is True
+          assert m["auth_required"] is False
+
+          nb=nro.read_bytes()
+          pb=nup.read_bytes()
+          ub=updater.read_bytes()
+
+          assert len(nb)>=20 and nb[16:20]==b"NRO0"
+          assert len(ub)>=20 and ub[16:20]==b"NRO0"
+          assert hashlib.sha256(nb).hexdigest()==m["sha256"]
+          assert len(nb)==m["size"]
+          assert hashlib.sha256(pb).hexdigest()==m["package_sha256"]
+          assert len(pb)==m["package_size"]
+          assert hashlib.sha256(ub).hexdigest()==m["updater_sha256"]
+          assert len(ub)==m["updater_size"]
+          assert r["sha256"]==m["sha256"]
+          assert r["package_sha256"]==m["package_sha256"]
+
+          m["package_url"]="https://github.com/Desoraven007/Neural-IPTV-OTA/releases/download/beta-1.0.2/NeuralIPTVPlayer.nup"
+          m["next_manifest_url"]="https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json"
+          m["updater_url"]="https://github.com/Desoraven007/Neural-IPTV-OTA/releases/download/beta-1.0.2/NeuralIPTVUpdater.nro"
+          mp.write_text(json.dumps(m,indent=2)+"\n",encoding="utf-8")
+          print("BLD-003 VALIDATED")
+          PY
+
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TAG="beta-1.0.2"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG"               artifact/NeuralIPTVPlayer.nup               artifact/NeuralIPTVPlayer.nro               artifact/NeuralIPTVUpdater.nro               artifact/manifest.json               --clobber
+          else
+            gh release create "$TAG"               artifact/NeuralIPTVPlayer.nup               artifact/NeuralIPTVPlayer.nro               artifact/NeuralIPTVUpdater.nro               artifact/manifest.json               --title "Neural IPTV 1.0.2 Beta / BLD-003"               --notes "Atualização cumulativa V1: inclui deteção automática do JSON Google da BLD-002 e o novo Centro de Notificações da BLD-003. Pode ser instalada diretamente sobre a BLD-001."               --prerelease
+          fi
+
+      - name: Promote public manifest
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp artifact/manifest.json manifest.json
+
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("CHANGELOG.md")
+          old=p.read_text(encoding="utf-8") if p.exists() else "# Neural IPTV OTA\n"
+          heading="## 1.0.2 / BLD-003 Beta"
+          entry="\n## 1.0.2 / BLD-003 Beta\n- Atualização cumulativa direta a partir da BLD-001.\n- Inclui deteção automática de JSON Google por conteúdo, independentemente do nome.\n- Novo Centro de Notificações: Caixa de entrada, Lidas e Arquivadas.\n- Arquivar e apagar mensagens.\n- Sino integrado na HUD e anima apenas quando entram novas notificações.\n- Feed público para atualizações, novidades e pedidos voluntários de apoio à evolução.\n- update_seq 3; update_epoch 1.\n"
+          if heading not in old:
+              p.write_text(old.rstrip()+"\n"+entry+"\n",encoding="utf-8")
+          PY
+
+          git config user.name "Neural IPTV Publisher"
+          git config user.email "actions@users.noreply.github.com"
+          git add manifest.json CHANGELOG.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish Neural IPTV 1.0.2 BLD-003 OTA"
+            git push
+          fi
+
+      - name: Verify public OTA
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fsSL --retry 5             https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json             -o verified-manifest.json
+
+          python3 - <<'PY'
+          import json
+          m=json.load(open("verified-manifest.json"))
+          assert m["version"]=="1.0.2"
+          assert m["build_id"]=="BLD-003"
+          assert m["update_seq"]==3
+          assert m["update_epoch"]==1
+          assert m["package_url"].endswith("/beta-1.0.2/NeuralIPTVPlayer.nup")
+          print("PUBLIC MANIFEST PASS")
+          PY
+
+          URL="$(python3 -c 'import json; print(json.load(open("verified-manifest.json"))["package_url"])')"
+          curl -fLIsS --retry 5 "$URL" >/dev/null
+          echo "PUBLIC PACKAGE PASS"
