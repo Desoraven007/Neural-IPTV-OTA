@@ -22,3 +22,11 @@
 ## 7.0.22 / BLD-038 Beta
 - Google Drive OAuth em 3 passos: credenciais, código Google, concluir ligação.
 - Mantém fix de loop OTA BLD-037 e Dev Eye Sentinela.
+
+## 1.0.1 / BLD-002 Beta
+- Google OAuth: deteção automática de JSON válido por conteúdo, independentemente do nome.
+- Pasta preferida: /switch/neural-iptv-player/google/.
+- Também aceita JSON diretamente em /switch/neural-iptv-player/.
+- Remove a introdução manual de Client ID e Client Secret na Switch.
+- update_seq 2; update_epoch 1.
+
