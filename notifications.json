@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "events": [
+    {
+      "schema_version": 1,
+      "event_id": "news-notification-center-bld003",
+      "type": "NEWS",
+      "created_at": "2026-09-30",
+      "build_id": "BLD-003",
+      "version": "1.0.2",
+      "title": "Novo centro de notificações",
+      "body": "As notificações passam a ter Caixa de entrada, Lidas e Arquivadas. Pode arquivar ou apagar mensagens. Aqui serão comunicadas atualizações, novidades da Neural IPTV e, quando aplicável, pedidos voluntários de apoio à evolução do projeto.",
+      "state": "UNREAD",
+      "action": ""
+    }
+  ]
+}
