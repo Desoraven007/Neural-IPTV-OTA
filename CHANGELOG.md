@@ -45,3 +45,11 @@
 - update_seq 15; update_epoch 1.
 - NRO SHA-256: 50a81e5b8432dd9e20feb1898be457f0ff6d63c5c737441f92c7371c2f0de2dc
 
+## 1.0.16 / BLD-017 Beta
+- Prova OTA do novo Neural Updater externo.
+- Barra de progresso só aparece quando existe atualização ou instalação em curso.
+- Área de progresso com fundo coerente com os cartões Versão instalada/Canal.
+- Zero pop-ups no fluxo normal de atualização.
+- Dev Eye cumulativo preservado.
+- update_seq 17; update_epoch 1.
+
