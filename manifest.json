@@ -1,17 +1,17 @@
 {
-  "version": "1.0.21",
-  "build_id": "BLD-022",
+  "version": "1.0.22",
+  "build_id": "BLD-023",
   "channel": "Beta",
   "encrypted": true,
   "encryption": "CHACHA20-HMAC-SHA256-v1",
-  "package_url": "https://github.com/Desoraven007/Neural-IPTV-OTA/releases/download/beta-1.0.21/NeuralIPTVPlayer.nup",
-  "package_sha256": "30ee0c28bd275cf0d66c5324fa083f1290457402f0f987bbe45aa890a1b48ddb",
+  "package_url": "https://github.com/Desoraven007/Neural-IPTV-OTA/releases/download/beta-1.0.22/NeuralIPTVPlayer.nup",
+  "package_sha256": "81a9b7c356b198cf777688500d1647652d2e45c09c33fee1b90d920d04d0b2a0",
   "package_size": 38870850,
-  "sha256": "c038135bc2f6222f6fb7f3bc144b219c754268a5699ccfd7cbae12a2479b2bbf",
+  "sha256": "5bf6461e18c36551f554c215d68d681e590922ad2e2c68b55b810b1b4ae429fb",
   "size": 38870790,
   "next_manifest_url": "https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json",
   "update_epoch": 1,
-  "update_seq": 22,
+  "update_seq": 23,
   "public": true,
   "auth_required": false
 }
