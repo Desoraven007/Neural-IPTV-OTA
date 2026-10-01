@@ -39,3 +39,9 @@
 - Feed público para atualizações, novidades e pedidos voluntários de apoio à evolução.
 - update_seq 3; update_epoch 1.
 
+## 1.0.14 / BLD-015 Beta
+- Dev Eye completo com Evidence Integrity Guard e DEV Action Board.
+- QA guiado, triage, runtime/input/crash breadcrumbs e análise visual.
+- update_seq 15; update_epoch 1.
+- NRO SHA-256: 50a81e5b8432dd9e20feb1898be457f0ff6d63c5c737441f92c7371c2f0de2dc
+
