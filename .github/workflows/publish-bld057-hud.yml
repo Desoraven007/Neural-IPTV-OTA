@@ -1,0 +1,59 @@
+name: Publish BLD-057 HUD OTA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".publish-bld057-hud"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download prepared encrypted OTA artifact
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fL --retry 5 'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-316c-820a-a842-4fb7e78e8d5f/raw?se=2026-10-03T23%3A49%3A37Z&sp=r&sv=2026-02-06&sr=b&scid=30d0f43b-467a-505d-9064-1afdc9c25702&skoid=3804227d-1b52-417d-afd9-9ffbb50fa53e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T18%3A55%3A05Z&ske=2026-10-04T18%3A55%3A05Z&sks=b&skv=2026-02-06&sig=Gces8KxmyRTRMREhg3qj/uNIMy5PX91SC3WqkoTW0m8%3D' -o /tmp/bld057.zip
+          rm -rf /tmp/bld057
+          mkdir -p /tmp/bld057
+          unzip -q /tmp/bld057.zip -d /tmp/bld057
+          test -s /tmp/bld057/NeuralIPTVPlayer.nup
+          test -s /tmp/bld057/manifest.json
+
+      - name: Validate package and manifest
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("/tmp/bld057")
+          m=json.loads((root/"manifest.json").read_text())
+          p=(root/"NeuralIPTVPlayer.nup").read_bytes()
+          assert m["version"]=="7.0.57"
+          assert m["update_seq"]==57
+          assert m["build_id"]=="BLD-057-HUD"
+          assert m["encrypted"] is True
+          assert len(p)==m["package_size"]
+          assert hashlib.sha256(p).hexdigest()==m["package_sha256"]
+          assert len(m["signature"])==128
+          print("BLD057_PACKAGE_VALID")
+          PY
+
+      - name: Promote OTA files
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp /tmp/bld057/NeuralIPTVPlayer.nup ./NeuralIPTVPlayer.nup
+          cp /tmp/bld057/manifest.json ./manifest.json
+          git config user.name "Neural IPTV Publisher"
+          git config user.email "actions@users.noreply.github.com"
+          git add NeuralIPTVPlayer.nup manifest.json
+          git commit -m "Publish Neural IPTV BLD-057 HUD phase 1"
+          git push
