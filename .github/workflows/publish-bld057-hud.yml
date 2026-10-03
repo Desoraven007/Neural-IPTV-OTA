@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".publish-bld057-hud"
+      - ".github/workflows/publish-bld057-hud.yml"
 
 permissions:
   contents: write
