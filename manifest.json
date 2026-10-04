@@ -10,7 +10,7 @@
   "size": 36513942,
   "encrypted": true,
   "encryption": "CHACHA20-HMAC-SHA256-v1",
-  "package_sha256": "14c2d5b449ba865b10286888485f2655b822c745fa1eb4b3c4481de910fa3f7f",
+  "package_sha256": "4366331c063c6be26b09883c0b677ba0c292e70aaba323304b5f59f2aba873fd",
   "package_size": 36514002,
   "signing_key_id": "neural-ota-ed25519-v1",
   "signature_algorithm": "Ed25519",
@@ -18,5 +18,5 @@
   "auth_required": false,
   "next_manifest_url": "https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json?v=082-r1",
   "published_revision": "082-r1",
-  "signature": "4b1eeba820f6345fd61cfc38e345b151a2931eacb720ffa2ae2827126d8a98f16d1cb571ac1d4e713e423b319903175938afbf783579515507e91a606a30870d"
+  "signature": "586c0621b3832fe92ee2f33b563d55dc298924cd74e93df1225f384221d2610e4ecdad5a6104c970f58556b2c15e9ed32d9641b15be5651885ee927b2fb3dd05"
 }
