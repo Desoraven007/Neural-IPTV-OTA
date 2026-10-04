@@ -1,21 +1,21 @@
 {
   "schema_version": 2,
-  "version": "7.0.69",
+  "version": "7.0.71",
   "display_version": "1.0.0 Beta",
-  "update_seq": 69,
-  "build_id": "BLD-069-HUD-VISIBLE",
+  "update_seq": 71,
+  "build_id": "BLD-071-NATIVE-HUD",
   "channel": "Canary",
   "package_url": "https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/NeuralIPTVPlayer.nup",
-  "sha256": "8cd321c823b06dde991fb446f6af956791730b64e08c7d7fe51c3267bc199aa4",
+  "sha256": "8396351f9d4143ab574a4c17376c6450a14d860f33a8b6ec0dbaccc0ab4147a1",
   "size": 36374678,
   "encrypted": true,
   "encryption": "CHACHA20-HMAC-SHA256-v1",
-  "package_sha256": "0c20ab0b1176da47582ca22ac74e2e2f2670e95003695c9e9fced8aead1021b4",
+  "package_sha256": "f29cbd77464656fd540c0183a0444e74e329d14aff1af70d6d58f6852aead84e",
   "package_size": 36374738,
   "signing_key_id": "neural-ota-ed25519-v1",
   "signature_algorithm": "Ed25519",
   "public": true,
   "auth_required": false,
   "next_manifest_url": "https://raw.githubusercontent.com/Desoraven007/Neural-IPTV-OTA/main/manifest.json",
-  "signature": "613b8c096dadd1aeb9111d0ba5f3a1dd4a8b10a7f5dcd9409172260e09b29b13cb8736a43b3ec8cec89d0eec4f88bdd5b097122abe80727ca08a070bc4a9db0f"
+  "signature": "109afa88af073d49f5317949fc26d904e03f279be3ed2ca118a89606aa82f9df3eb4ad5d6fe4595a166df463ba04b8be36e5eeebaff98f82672667b276ff2a07"
 }
