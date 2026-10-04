@@ -1,11 +1,11 @@
-name: Publish BLD-057 HUD OTA
+name: Publish BLD-059 HUD OTA
 
 on:
   push:
     branches: [main]
     paths:
-      - ".publish-bld057-hud"
-      - ".github/workflows/publish-bld057-hud.yml"
+      - ".publish-bld059-hud"
+      - ".github/workflows/publish-bld059-hud.yml"
 
 permissions:
   contents: write
@@ -20,12 +20,12 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          curl -fL --retry 5 'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-316c-820a-a842-4fb7e78e8d5f/raw?se=2026-10-03T23%3A49%3A37Z&sp=r&sv=2026-02-06&sr=b&scid=30d0f43b-467a-505d-9064-1afdc9c25702&skoid=3804227d-1b52-417d-afd9-9ffbb50fa53e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T18%3A55%3A05Z&ske=2026-10-04T18%3A55%3A05Z&sks=b&skv=2026-02-06&sig=Gces8KxmyRTRMREhg3qj/uNIMy5PX91SC3WqkoTW0m8%3D' -o /tmp/bld057.zip
-          rm -rf /tmp/bld057
-          mkdir -p /tmp/bld057
-          unzip -q /tmp/bld057.zip -d /tmp/bld057
-          test -s /tmp/bld057/NeuralIPTVPlayer.nup
-          test -s /tmp/bld057/manifest.json
+          curl -fL --retry 5 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-d124-8210-9bef-33fc40a1833d/raw?se=2026-10-04T00%3A30%3A08Z&sp=r&sv=2026-02-06&sr=b&scid=c4bfd978-41f9-5395-bd5d-ecca74da8842&skoid=3804227d-1b52-417d-afd9-9ffbb50fa53e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T18%3A55%3A27Z&ske=2026-10-04T18%3A55%3A27Z&sks=b&skv=2026-02-06&sig=uXa1GPftNv98frI/Un6iK8v1HWLNe9YvXAXHBjv9yrU%3D' -o /tmp/bld059.zip
+          rm -rf /tmp/bld059
+          mkdir -p /tmp/bld059
+          unzip -q /tmp/bld059.zip -d /tmp/bld059
+          test -s /tmp/bld059/NeuralIPTVPlayer.nup
+          test -s /tmp/bld059/manifest.json
 
       - name: Validate package and manifest
         shell: bash
@@ -34,12 +34,12 @@ jobs:
           python3 - <<'PY'
           import hashlib,json
           from pathlib import Path
-          root=Path("/tmp/bld057")
+          root=Path("/tmp/bld059")
           m=json.loads((root/"manifest.json").read_text())
           p=(root/"NeuralIPTVPlayer.nup").read_bytes()
-          assert m["version"]=="7.0.57"
-          assert m["update_seq"]==57
-          assert m["build_id"]=="BLD-057-HUD"
+          assert m["version"]=="7.0.59"
+          assert m["update_seq"]==59
+          assert m["build_id"]=="BLD-059-HUD"
           assert m["encrypted"] is True
           assert len(p)==m["package_size"]
           assert hashlib.sha256(p).hexdigest()==m["package_sha256"]
@@ -51,10 +51,10 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          cp /tmp/bld057/NeuralIPTVPlayer.nup ./NeuralIPTVPlayer.nup
-          cp /tmp/bld057/manifest.json ./manifest.json
+          cp /tmp/bld059/NeuralIPTVPlayer.nup ./NeuralIPTVPlayer.nup
+          cp /tmp/bld059/manifest.json ./manifest.json
           git config user.name "Neural IPTV Publisher"
           git config user.email "actions@users.noreply.github.com"
           git add NeuralIPTVPlayer.nup manifest.json
-          git commit -m "Publish Neural IPTV BLD-057 HUD phase 1"
+          git commit -m "Publish Neural IPTV BLD-059 HUD phase 1"
           git push
